@@ -1,103 +1,158 @@
-# MNIST Diffusion Transformer from Scratch
+# Diffusion Model from Scratch
 
-A minimal implementation of a diffusion-style generative model using a Transformer-based architecture (DiT-style) trained on the MNIST dataset.
+A diffusion and flow-based generative model implemented from scratch in PyTorch using a Transformer-based architecture (DiT-style).
 
-This project builds a vector field model from scratch and demonstrates both deterministic (ODE) and stochastic (SDE) sampling for image generation.
+The model learns a continuous-time vector field and supports both deterministic (ODE) and stochastic (SDE) sampling for image generation.
 
 ---
 
 ## Features
 
-- Patch-based image tokenization
-- Transformer architecture for vector field prediction
-- Time conditioning via sinusoidal embeddings
-- Adaptive normalization (time-dependent modulation)
-- Multi-head self-attention
-- Diffusion-style training objective
+- Transformer-based DiT architecture for vector field modeling  
+- Patch-based image tokenization  
+- Time conditioning via sinusoidal embeddings  
+- Adaptive normalization (time-dependent modulation)  
+- Multi-head self-attention  
+- Continuous-time vector field formulation (unifying flow and diffusion models)  
 - Generation using:
-  - ODE (deterministic)
-  - SDE (stochastic)
+  - ODE (deterministic sampling)
+  - SDE (stochastic sampling with diffusion)
+
+---
+
+## Model Overview
+
+The model learns a vector field $u_\theta(x, t)$ over data and noise interpolation.
+
+### Training Objective
+
+$$
+\mathcal{L} = \mathbb{E}_{t, x, \epsilon} \left\| u_\theta(x_t, t) - (x - \epsilon) \right\|^2
+$$
+
+### Interpolation
+
+$$
+x_t = t x + (1 - t)\epsilon
+$$
+
+### Sampling
+
+- **ODE (deterministic):**
+  
+  $$
+  \frac{dx}{dt} = u_\theta(x, t)
+  $$
+
+- **SDE (stochastic):**
+  
+  Adds time-dependent noise during generation using a diffusion term.
 
 ---
 
 ## Repository Structure
 
-    .
-    ├── model.py        # Transformer-based vector field model (DiT-style)
-    ├── train.py        # Training loop and loss computation
-    ├── sample.py       # Image generation (ODE and SDE)
-    ├── data.py         # MNIST loading and batching
-    ├── config.py       # Hyperparameters and device setup
-    ├── README.md
+```
+.
+├── model.py        # DiT-style transformer vector field model
+├── train.py        # Training loop and loss computation
+├── sample.py       # Image generation (ODE and SDE)
+├── data.py         # MNIST loading and batching
+├── config.py       # Hyperparameters and device setup
+├── README.md
+```
 
 ---
 
 ## Dataset
 
-This project uses the **MNIST dataset** (handwritten digits, 28×28 grayscale images), automatically downloaded via `torchvision`.
+Uses the **MNIST dataset** (28×28 grayscale handwritten digits), automatically downloaded via `torchvision`.
 
 ---
 
 ## Setup
 
-## Setup and Usage
-
 ### Clone the Repository
 
-    git clone https://github.com/your-username/mnist-dit-from-scratch.git
-    cd mnist-dit-from-scratch
-
----
-
-### Create Environment and Install Dependencies
-
-    python -m venv .venv
-    source .venv/bin/activate
-    pip install torch torchvision matplotlib
-
----
-
-### Train the Model
-
-    python train.py
-
-- Trains on MNIST  
-- Saves weights as `model.pth`  
-- Plots training loss  
-
----
-
-### Generate Samples
-
-    python sample.py
-
-- Loads `model.pth`  
-- Generates images via ODE and SDE  
-
----
-
-### Notes
-
-- Run `train.py` before `sample.py`  
-- By default, trains on digit **0** only  
-
-To train on all digits, set:
-
-```python
-train_digit = None
 ```
+git clone https://github.com/rifath95/diffusion-model-from-scratch.git
+cd diffusion-model-from-scratch
+```
+
+### Install Dependencies
+
+```
+pip install torch torchvision matplotlib
+```
+
 ---
 
 ## Train the Model
 
-    python train.py
+```
+python train.py
+```
 
-This trains a vector field model using a diffusion-style objective.
+- Trains the vector field model  
+- Saves weights as `model.pth`  
+- Plots training loss  
 
 **Note:**  
-For simplicity, training is currently performed on a single digit class (`0`).
+By default, training is performed on digit **0** only (for simplicity).
 
-You can modify this behavior in `train.py`:
+To train on all digits, set in `config.py`:
 
 ```python
-image, label = get_batch('train', train_digit)
+train_digit = None
+```
+
+---
+
+## Generate Samples
+
+```
+python sample.py
+```
+
+- Loads trained weights (`model.pth`)  
+- Generates images using:
+  - ODE sampling (deterministic)
+  - SDE sampling (stochastic)  
+
+---
+
+## Key Concepts Implemented
+
+### Vector Field Modeling
+Learns a continuous-time vector field $u_\theta(x, t)$ governing data evolution.
+
+### DiT-style Architecture
+Applies a Transformer over image patches with time conditioning.
+
+### Adaptive Normalization
+Modulates hidden representations using time-dependent scale and shift.
+
+### Time Embedding
+Uses sinusoidal embeddings to encode continuous time.
+
+### ODE Sampling
+Deterministic generation by integrating the learned vector field.
+
+### SDE Sampling
+Stochastic generation with explicit drift and diffusion terms.
+
+---
+
+## Notes
+
+- Built to understand modern diffusion and flow-based generative models from first principles  
+- Focused on mathematical clarity and full control over implementation  
+- No high-level diffusion libraries are used  
+
+---
+
+## Future Improvements
+
+- Train on larger datasets  
+- Add higher-resolution generation  
+- Implement DDPM/DDIM variants
