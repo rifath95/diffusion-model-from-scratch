@@ -26,7 +26,7 @@ lr = 1e-3
 betas = (0.9, 0.95)
 weight_decay = 1e-4
 
-n_steps = 10#1000
+n_steps = 1000
 train_digit = 0
 
 ## Sampling
