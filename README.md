@@ -143,6 +143,31 @@ Stochastic generation with explicit drift and diffusion terms.
 
 ---
 
+## Sample Outputs
+
+Generated images using the trained model:
+
+<p align="center">
+  <img src="docs/ode.png" width="45%" />
+  <img src="docs/sde.png" width="45%" />
+</p>
+
+<p align="center">
+  <em>Left: Generation via ODE (deterministic) &nbsp;&nbsp;&nbsp; Right: Generation via SDE (stochastic)</em>
+</p>
+
+---
+
+## Training Dynamics
+
+Training loss curve:
+
+<p align="center">
+  <img src="docs/training_loss.png" width="60%" />
+</p>
+
+---
+
 ## Notes
 
 - Built to understand modern diffusion and flow-based generative models from first principles  
